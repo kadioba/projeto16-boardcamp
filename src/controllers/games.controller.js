@@ -18,7 +18,8 @@ export async function insertGame(req, res) {
 
     try {
         const gameExists = await db.query(`SELECT * FROM games WHERE name=$1`, [name])
-        if (gameExists) return res.sendStatus(409)
+        console.log(gameExists)
+        if (gameExists.rowCount !== 0) return res.sendStatus(409)
 
         await db.query(`
             INSERT INTO games (name, image, "stockTotal", "pricePerDay")
