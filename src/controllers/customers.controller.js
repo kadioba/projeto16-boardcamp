@@ -1,3 +1,4 @@
+import { db } from "../database/database.connection.js"
 
 export async function getCustomers(req, res) {
     try {
@@ -30,9 +31,11 @@ export async function insertCustomer(req, res) {
         if (customerExists.rowCount !== 0) return res.sendStatus(409)
 
         await db.query(`
-            INSERT INTO customers (name, phone, cpf, birthday)`, [name, phone, cpf, birthday])
+            INSERT INTO customers (name, phone, cpf, birthday)
+                VALUES ($1, $2, $3, $4)`, [name, phone, cpf, birthday])
         res.sendStatus(201)
     } catch (err) {
+        console.log(err)
         res.status(500).send(err)
     }
 }
