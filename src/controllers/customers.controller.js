@@ -38,8 +38,18 @@ export async function insertCustomer(req, res) {
 }
 
 export async function updateCustomer(req, res) {
+    const { name, cpf, phone, birthday } = req.body
     try {
-        res.send("Função não implementada")
+        const user = await db.query(`
+            SELECT * FROM customers WHERE id=$1;`, [req.params.id])
+
+        if (!user.rows[0]) return res.sendStatus(404)
+        if (user.rows[0].cpf !== cpf) return res.sendStatus(409)
+
+        await db.query(`
+            UPDATE customers SET name=$1, phone=$2, cpf=$3, birthday=$4 WHERE id=$5;`, [name, phone, cpf, birthday, req.params.id])
+
+        res.sendStatus(200)
     } catch (err) {
         res.status(500).send(err)
     }
