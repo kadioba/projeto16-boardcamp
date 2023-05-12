@@ -14,7 +14,7 @@ export async function getGames(req, res) {
 export async function insertGame(req, res) {
     const { name, image, stockTotal, pricePerDay } = req.body
 
-    if (!pricePerDay >= 1 || !stockTotal >= 1 || req.body.name === "") return res.status(400).send("Estoque e preço da diaria devem ser maior que 0 e o nome deve estar presente")
+    if (pricePerDay <= 1 || stockTotal <= 0 || req.body.name === "") return res.status(400).send("Estoque e preço da diaria devem ser maior que 0 e o nome deve estar presente")
 
     try {
         const gameExists = await db.query(`SELECT * FROM games WHERE name=$1`, [name])
