@@ -27,7 +27,8 @@ export async function insertCustomer(req, res) {
     const { name, cpf, phone, birthday } = req.body
 
     try {
-        const customerExists = await db.query(`SELECT * FROM customers WHERE name=$1`, [cpf])
+        const customerExists = await db.query(`SELECT * FROM customers WHERE cpf=$1`, [cpf])
+        console.log(customerExists)
         if (customerExists.rowCount !== 0) return res.sendStatus(409)
 
         await db.query(`
