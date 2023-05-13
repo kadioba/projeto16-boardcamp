@@ -1,10 +1,14 @@
+import dayjs from "dayjs"
 import { db } from "../database/database.connection.js"
 
 export async function getCustomers(req, res) {
     try {
         const customers = await db.query(`
             SELECT * FROM customers;`)
-        res.send(customers.rows)
+        res.send(customers.rows.map(row => {
+            const newRow = { ...row, birthday: dayjs(row.birthday).format('YYYY-MM-DD') }
+            return newRow
+        }))
     } catch (err) {
         res.status(500).send(err)
     }
@@ -17,8 +21,11 @@ export async function getCustomerById(req, res) {
 
         if (!customer.rows[0]) return res.sendStatus(404)
 
+        customer.rows[0].birthday = dayjs(customer.rows[0].birthday).format('YYYY-MM-DD');
+
         res.send(customer.rows[0])
     } catch (err) {
+        console.log(err)
         res.status(500).send(err)
     }
 }
