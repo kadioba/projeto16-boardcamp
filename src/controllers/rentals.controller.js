@@ -2,10 +2,24 @@ import dayjs from "dayjs"
 import { db } from "../database/database.connection.js"
 
 export async function getRentals(req, res) {
+
     try {
-        res.send("Função não implementada")
+        const rentals = await db.query(`SELECT rentals.*, customers.name AS "customerName", games.name AS "gameName"
+            FROM rentals JOIN customers ON rentals."customerId" = customers.id
+            JOIN games ON rentals."gameId" = games.id`)
+
+        const rentalsOrganized = rentals.rows.map(rental => {
+            rental.customer = { id: rental.customerId, name: rental.customerName }
+            rental.game = { id: rental.gameId, name: rental.gameName }
+            delete rental.gameName
+            delete rental.customerName
+            return rental
+        })
+        res.send(rentalsOrganized)
+
     } catch (err) {
         res.status(500).send(err)
+        console.log(err)
     }
 }
 
