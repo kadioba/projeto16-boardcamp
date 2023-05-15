@@ -100,7 +100,12 @@ export async function endRental(req, res) {
 
 export async function deleteRental(req, res) {
     try {
-        res.send("Função não implementada")
+        const rental = await db.query(`SELECT * FROM rentals WHERE id = $1`, [req.params.id])
+        if (!rental.rows[0]) return res.sendStatus(404)
+        if (rental.rows[0].returnDate) return res.sendStatus(400)
+
+        const deletedRental = await db.query(`DELETE FROM rentals WHERE id = $1`, [req.params.id])
+        res.sendStatus(200)
     } catch (err) {
         res.status(500).send(err)
     }
