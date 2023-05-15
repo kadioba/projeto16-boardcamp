@@ -86,16 +86,16 @@ export async function endRental(req, res) {
         console.log("Dias extras: " + extraDays)
         console.log("Preço original: " + rental.rows[0].originalPrice)
         console.log("DelayFee : " + delayFee)
-        /* 
-                if (delayFee) {
-                    const updatedRental = await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2  WHERE id = $3;`, [dateNow, delayFee, req.params.id])
-                    return res.sendStatus(200)
-                }
-                else {
-                    const updatedRental = await db.query(`UPDATE rentals SET "returnDate" = $1 WHERE id = $2;`, [dateNow, req.params.id])
-                    return res.sendStatus(200)
-                } */
-        res.sendStatus(200)
+
+        if (delayFee) {
+            const updatedRental = await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2  WHERE id = $3;`, [dateNow, delayFee, req.params.id])
+            return res.sendStatus(200)
+        }
+        else {
+            const updatedRental = await db.query(`UPDATE rentals SET "returnDate" = $1 WHERE id = $2;`, [dateNow, req.params.id])
+            return res.sendStatus(200)
+        }
+
 
     } catch (err) {
         res.status(500).send(err)
