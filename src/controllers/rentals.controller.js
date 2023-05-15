@@ -63,11 +63,22 @@ export async function endRental(req, res) {
         if (rental.rows[0].returnDate !== null) res.sendStatus(400)
 
         const dateNow = dayjs().format('YYYY-MM-DD')
-        const diffInMs = new Date(rental.rows[0].rentDate) - new Date(dateNow)
-        const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-        const extraDays = diffInDays - rental.rows[0].daysRented;
+        console.log(dateNow)
+        console.log(rental.rows[0].rentDate)
+        console.log(rental.rows[0].daysRented)
 
-        const delayFee = null;
+
+        const umDiaEmMilissegundos = 24 * 60 * 60 * 1000; // Número de milissegundos em um dia
+        const dataInicialObj = new Date(rental.rows[0].rentDate);
+        const dataFinalObj = new Date(Date.now());
+        const dataInicialSemHorario = new Date(dataInicialObj.getFullYear(), dataInicialObj.getMonth(), dataInicialObj.getDate());
+        const dataFinalSemHorario = new Date(dataFinalObj.getFullYear(), dataFinalObj.getMonth(), dataFinalObj.getDate());
+        const diferencaEmMilissegundos = Math.abs(dataFinalSemHorario - dataInicialSemHorario);
+        const diferencaEmDias = Math.round(diferencaEmMilissegundos / umDiaEmMilissegundos);
+
+        const extraDays = diferencaEmDias - rental.rows[0].daysRented;
+
+        let delayFee = null;
         if (extraDays > 0) {
             delayFee = Math.round(extraDays * (rental.rows[0].originalPrice * 2))
         }
@@ -83,6 +94,7 @@ export async function endRental(req, res) {
 
     } catch (err) {
         res.status(500).send(err)
+        console.log(err)
     }
 }
 
