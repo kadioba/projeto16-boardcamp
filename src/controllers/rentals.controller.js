@@ -60,7 +60,7 @@ export async function endRental(req, res) {
     try {
         const rental = await db.query(`SELECT * FROM rentals WHERE id=$1;`, [req.params.id]);
         if (!rental.rows[0]) return res.sendStatus(404)
-        if (rental.rows[0].returnDate !== null) res.sendStatus(400)
+        if (rental.rows[0].returnDate !== null) return res.sendStatus(400)
 
         const dateNow = dayjs().format('YYYY-MM-DD')
 
@@ -79,21 +79,23 @@ export async function endRental(req, res) {
 
         let delayFee = null;
         if (extraDays > 0) {
-            delayFee = Math.round(extraDays * (rental.rows[0].originalPrice))
+            delayFee = (extraDays * (rental.rows[0].originalPrice))
         }
-        console.log(diferencaEmDias)
-        console.log(extraDays)
-        console.log(rental.rows[0].originalPrice)
-        console.log(delayFee)
-
-        if (delayFee) {
-            const updatedRental = await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2  WHERE id = $3;`, [dateNow, delayFee, req.params.id])
-            return res.sendStatus(200)
-        }
-        else {
-            const updatedRental = await db.query(`UPDATE rentals SET "returnDate" = $1 WHERE id = $2;`, [dateNow, req.params.id])
-            return res.sendStatus(200)
-        }
+        console.log("Diferenca em dias: " + diferencaEmDias)
+        console.log("Dias alugados: " + rental.rows[0].daysRented)
+        console.log("Dias extras: " + extraDays)
+        console.log("Preço original: " + rental.rows[0].originalPrice)
+        console.log("DelayFee : " + delayFee)
+        /* 
+                if (delayFee) {
+                    const updatedRental = await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2  WHERE id = $3;`, [dateNow, delayFee, req.params.id])
+                    return res.sendStatus(200)
+                }
+                else {
+                    const updatedRental = await db.query(`UPDATE rentals SET "returnDate" = $1 WHERE id = $2;`, [dateNow, req.params.id])
+                    return res.sendStatus(200)
+                } */
+        res.sendStatus(200)
 
     } catch (err) {
         res.status(500).send(err)
