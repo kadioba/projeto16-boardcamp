@@ -79,7 +79,7 @@ export async function endRental(req, res) {
 
         let delayFee = null;
         if (extraDays > 0) {
-            delayFee = (extraDays * (rental.rows[0].originalPrice))
+            delayFee = (extraDays * (rental.rows[0].pricePerDay))
         }
         console.log("Diferenca em dias: " + diferencaEmDias)
         console.log("Dias alugados: " + rental.rows[0].daysRented)
