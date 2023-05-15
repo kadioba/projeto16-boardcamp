@@ -75,13 +75,17 @@ export async function endRental(req, res) {
         const dataFinalSemHorario = new Date(dataFinalObj.getFullYear(), dataFinalObj.getMonth(), dataFinalObj.getDate());
         const diferencaEmMilissegundos = Math.abs(dataFinalSemHorario - dataInicialSemHorario);
         const diferencaEmDias = Math.round(diferencaEmMilissegundos / umDiaEmMilissegundos);
+        console.log(diferencaEmDias)
 
-        const extraDays = diferencaEmDias - rental.rows[0].daysRented;
+        const extraDays = diferencaEmDias - (rental.rows[0].daysRented - 1);
 
         let delayFee = null;
         if (extraDays > 0) {
             delayFee = Math.round(extraDays * (rental.rows[0].originalPrice))
         }
+        console.log(extraDays)
+        console.log(rental.rows[0].originalPrice)
+        console.log(delayFee)
 
         if (delayFee) {
             const updatedRental = await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2  WHERE id = $3;`, [dateNow, delayFee, req.params.id])
