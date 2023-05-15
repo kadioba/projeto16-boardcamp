@@ -80,7 +80,7 @@ export async function endRental(req, res) {
 
         let delayFee = null;
         if (extraDays > 0) {
-            delayFee = Math.round(extraDays * (rental.rows[0].originalPrice * 2))
+            delayFee = Math.round(extraDays * (rental.rows[0].originalPrice))
         }
 
         if (delayFee) {
